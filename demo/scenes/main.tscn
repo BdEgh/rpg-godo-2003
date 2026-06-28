@@ -3,11 +3,15 @@
 [ext_resource type="Script" uid="uid://bpl2msts7fe8c" path="res://cogs/audio_output.gd" id="2_0wfyh"]
 [ext_resource type="Script" uid="uid://c7appq8adg23t" path="res://cogs/debug.gd" id="2_o6xl0"]
 [ext_resource type="Theme" uid="uid://dx13y3513lj8e" path="res://resources/theme.tres" id="2_sugp2"]
-[ext_resource type="Script" uid="uid://k5g7aae8way2" path="res://cogs/player.gd" id="2_tipki"]
-[ext_resource type="Script" uid="uid://blxa12njnbatg" path="res://cogs/setup_screen.gd" id="3_tefeu"]
+[ext_resource type="Script" uid="uid://dqxxnroichm58" path="res://cogs/player.gd" id="2_tipki"]
+[ext_resource type="Script" uid="uid://c60wtn8idcv82" path="res://cogs/setup_screen.gd" id="3_tefeu"]
 [ext_resource type="Texture2D" uid="uid://dcw31o6ckjsa3" path="res://resources/orchidmantis_system_celestial.png" id="4_tbgi4"]
 [ext_resource type="Texture2D" uid="uid://8nq581ljnhf1" path="res://resources/16x16.png" id="4_tefeu"]
+[ext_resource type="Script" uid="uid://sonh8ck8vsp" path="res://cogs/chat_overlay.gd" id="8_85g3d"]
 [ext_resource type="Script" uid="uid://c7d4uy5lls8cx" path="res://cogs/game_texture.gd" id="8_tipki"]
+[ext_resource type="FontFile" uid="uid://dh8uf0t6kqv8" path="res://resources/RM2000.ttf" id="10_choun"]
+[ext_resource type="StyleBox" uid="uid://bfbanystyirf6" path="res://resources/chat_stylebox.tres" id="11_ya4ey"]
+[ext_resource type="StyleBox" uid="uid://cg3fj7teitw24" path="res://resources/chat_stylebox_focus.tres" id="12_eb6dy"]
 
 [sub_resource type="Gradient" id="Gradient_tbgi4"]
 offsets = PackedFloat32Array(0, 0.627907, 0.9302326, 1)
@@ -43,12 +47,13 @@ viewport_path = NodePath("EngineLayer/TextureRect/GameSubViewport")
 [node name="WE_PostProcess" type="WorldEnvironment" parent="." unique_id=1883357518]
 environment = SubResource("Environment_0wfyh")
 
-[node name="RPGMakerPlayer" type="RPGMakerPlayer" parent="." unique_id=459576679 node_paths=PackedStringArray("texture_rect", "game_sub_viewport")]
-unique_name_in_owner = true
+[node name="RPGMakerPlayer" type="RPGMakerPlayer" parent="." unique_id=459576679 node_paths=PackedStringArray("texture_rect", "game_sub_viewport", "chat_text_field")]
 game_path = "res://games/CU_offline"
+unique_name_in_owner = true
 script = ExtResource("2_tipki")
 texture_rect = NodePath("../EngineLayer/TextureRect/GameSubViewport/GameTexture")
 game_sub_viewport = NodePath("../EngineLayer/TextureRect/GameSubViewport")
+chat_text_field = NodePath("../ChatOverlayLayer/ChatControl/VBoxContainer/ChatField")
 
 [node name="AudioOutput" type="Node" parent="RPGMakerPlayer" unique_id=1197651198 node_paths=PackedStringArray("engine")]
 script = ExtResource("2_0wfyh")
@@ -110,9 +115,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -140.0
-offset_top = -120.0
+offset_top = -134.0
 offset_right = 140.0
-offset_bottom = 120.0
+offset_bottom = 134.0
 grow_horizontal = 2
 grow_vertical = 2
 metadata/_edit_use_anchors_ = true
@@ -253,8 +258,94 @@ layout_mode = 2
 custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
 
+[node name="GameOptions" type="Button" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer" unique_id=1252056792]
+custom_minimum_size = Vector2(48, 96.295)
+layout_mode = 2
+mouse_filter = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/GameOptions" unique_id=2043966806]
+z_index = -1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/GameOptions/MarginContainer" unique_id=249397716]
+layout_mode = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/GameOptions/MarginContainer/PanelContainer" unique_id=925002290]
+layout_mode = 2
+alignment = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/GameOptions/MarginContainer/PanelContainer/VBoxContainer" unique_id=1959814526]
+clip_children = 1
+layout_mode = 2
+bbcode_enabled = true
+text = "Game options"
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/GameOptions/MarginContainer/PanelContainer/VBoxContainer/RichTextLabel" unique_id=2123298504]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("AtlasTexture_tefeu")
+expand_mode = 1
+stretch_mode = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="MarginContainer" type="MarginContainer" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/GameOptions/MarginContainer/PanelContainer/VBoxContainer" unique_id=2085684771]
+layout_mode = 2
+theme_override_constants/margin_left = 50
+theme_override_constants/margin_right = 50
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/GameOptions/MarginContainer/PanelContainer/VBoxContainer/MarginContainer" unique_id=518943081]
+layout_mode = 2
+
+[node name="RichTextLabel2" type="RichTextLabel" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/GameOptions/MarginContainer/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer" unique_id=1365186472]
+clip_children = 1
+layout_mode = 2
+bbcode_enabled = true
+text = "Window scale"
+fit_content = true
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/GameOptions/MarginContainer/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/RichTextLabel2" unique_id=251145084]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("AtlasTexture_tefeu")
+expand_mode = 1
+stretch_mode = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="WindowScale" type="OptionButton" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/GameOptions/MarginContainer/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer" unique_id=1935431017]
+unique_name_in_owner = true
+layout_mode = 2
+selected = 0
+item_count = 4
+popup/item_0/text = "1x"
+popup/item_0/id = 0
+popup/item_1/text = "2x"
+popup/item_1/id = 1
+popup/item_2/text = "3x"
+popup/item_2/id = 2
+popup/item_3/text = "4x"
+popup/item_3/id = 3
+
 [node name="Multiplayer" type="Button" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer" unique_id=325583667]
-custom_minimum_size = Vector2(48, 132)
+custom_minimum_size = Vector2(48, 170)
 layout_mode = 2
 mouse_filter = 2
 
@@ -422,6 +513,42 @@ metadata/_edit_use_anchors_ = true
 unique_name_in_owner = true
 layout_mode = 2
 
+[node name="HBoxContainer5" type="HBoxContainer" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/Multiplayer/MarginContainer/VBoxContainer" unique_id=1291916112]
+layout_mode = 2
+
+[node name="Spacer" type="Control" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/Multiplayer/MarginContainer/VBoxContainer/HBoxContainer5" unique_id=1116409518]
+custom_minimum_size = Vector2(15, 0)
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/Multiplayer/MarginContainer/VBoxContainer/HBoxContainer5" unique_id=204326574]
+layout_mode = 2
+alignment = 1
+
+[node name="RichTextLabel" type="RichTextLabel" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/Multiplayer/MarginContainer/VBoxContainer/HBoxContainer5/VBoxContainer" unique_id=392413786]
+clip_children = 1
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+bbcode_enabled = true
+text = "Enable chat:"
+fit_content = true
+vertical_alignment = 1
+
+[node name="TextureRect" type="TextureRect" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/Multiplayer/MarginContainer/VBoxContainer/HBoxContainer5/VBoxContainer/RichTextLabel" unique_id=497225890]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = SubResource("AtlasTexture_tefeu")
+expand_mode = 1
+stretch_mode = 1
+metadata/_edit_use_anchors_ = true
+
+[node name="EnableChat" type="CheckBox" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/Multiplayer/MarginContainer/VBoxContainer/HBoxContainer5" unique_id=1086459223]
+unique_name_in_owner = true
+layout_mode = 2
+
 [node name="HBoxContainer" type="HBoxContainer" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer" unique_id=639083235]
 layout_mode = 2
 alignment = 2
@@ -570,4 +697,59 @@ stretch_mode = 5
 script = ExtResource("8_tipki")
 engine = NodePath("../../../../RPGMakerPlayer")
 
+<<<<<<< HEAD
+=======
+[node name="ChatOverlayLayer" type="CanvasLayer" parent="." unique_id=1353566743]
+unique_name_in_owner = true
+visible = false
+
+[node name="ChatControl" type="Control" parent="ChatOverlayLayer" unique_id=760576190]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+mouse_behavior_recursive = 2
+script = ExtResource("8_85g3d")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ChatOverlayLayer/ChatControl" unique_id=824267174]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+mouse_behavior_recursive = 2
+theme_override_constants/separation = 0
+alignment = 2
+
+[node name="MessageContainer" type="VBoxContainer" parent="ChatOverlayLayer/ChatControl/VBoxContainer" unique_id=1663354205]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(320, 0)
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 0
+alignment = 2
+
+[node name="ChatField" type="LineEdit" parent="ChatOverlayLayer/ChatControl/VBoxContainer" unique_id=1983333640]
+unique_name_in_owner = true
+layout_mode = 2
+mouse_filter = 1
+theme_override_fonts/font = ExtResource("10_choun")
+theme_override_styles/normal = ExtResource("11_ya4ey")
+theme_override_styles/focus = ExtResource("12_eb6dy")
+placeholder_text = "Press [T] to type..."
+max_length = 100
+editable = false
+emoji_menu_enabled = false
+backspace_deletes_composite_character_enabled = true
+caret_blink = true
+
+[connection signal="resolution_changed" from="RPGMakerPlayer" to="RPGMakerPlayer" method="_on_resolution_changed"]
+[connection signal="item_selected" from="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/GameOptions/MarginContainer/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/WindowScale" to="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen" method="_on_window_scale_changed"]
+>>>>>>> 1821663 (multiplayer chat, window scale options)
 [connection signal="toggled" from="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/Multiplayer/MarginContainer/VBoxContainer/HBoxContainer3/MpEnable" to="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen" method="_on_mp_enable_toggled"]

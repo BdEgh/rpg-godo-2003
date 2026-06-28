@@ -12,6 +12,12 @@ extends Control
 @onready var mp_server: CheckBox = %MpServer
 @onready var run_on_start: CheckBox = %RunOnStart
 @onready var save_and_run: Button = %SaveAndRun
+@onready var enable_chat: CheckBox = %EnableChat
+@onready var chat_ctrl: Control = %ChatControl
+@onready var chat_layer: CanvasLayer = %ChatOverlayLayer
+@onready var chat_vbox: VBoxContainer = %MessageContainer
+@onready var chat_field: LineEdit = %ChatField
+@onready var window_scale: OptionButton = %WindowScale
 
 @export var engine: Node
 
@@ -42,6 +48,12 @@ func _ready() -> void:
 	mp_url.text = cfg.get_value("multiplayer", "url", "ws://127.0.0.1:42424")
 	mp_server.button_pressed = cfg.get_value("multiplayer", "host_locally", false)
 	run_on_start.button_pressed = cfg.get_value("game", "run_on_start", false)
+	window_scale.selected = cfg.get_value("game", "window_scale", 0)
+	enable_chat.button_pressed = cfg.get_value("multiplayer", "enable_chat", false)
+	
+	var window := get_window()
+	var scale := window_scale.selected+1
+	window.size = Vector2(640, 480) * scale
 	
 	game_path_button.pressed.connect(_on_browse_pressed)
 	game_path_file_dialog.dir_selected.connect(_on_dir_selected)
@@ -70,11 +82,13 @@ func _start_mp_client(parent: Node) -> void:
 	multiplayer_node.engine = engine.get_path()
 	multiplayer_node.server_url = mp_url.text.strip_edges()
 	multiplayer_node.player_name = mp_name.text.strip_edges()
+	multiplayer_node.enable_chat = enable_chat.button_pressed
+	chat_ctrl.mp_connection = multiplayer_node # p4o-a7o: this is a little weird yes but we all die in the end anyways
 	parent.add_child(multiplayer_node)
 	# nametag modes: 0=NONE, 1=CLASSIC (3-char), 2=COMPACT (full), 3=SLIM (full, small font)
 	engine.mp_set_nametag_mode(3)
 	multiplayer_node.connect_to_room(0)
-
+	
 func _start_server_only() -> void:
 	godot_menu_layer.visible = false
 	var port := 42424
@@ -104,11 +118,13 @@ func _save_settings() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("game",        "path",         game_path.text.strip_edges())
 	cfg.set_value("game",        "run_on_start", run_on_start.button_pressed)
+	cfg.set_value("game",        "window_scale", window_scale.selected)
 	cfg.set_value("audio",       "volume",       audio_slider.value)
 	cfg.set_value("multiplayer", "enabled",      mp_enable.button_pressed)
 	cfg.set_value("multiplayer", "name",         mp_name.text.strip_edges())
 	cfg.set_value("multiplayer", "url",          mp_url.text.strip_edges())
 	cfg.set_value("multiplayer", "host_locally", mp_server.button_pressed)
+	cfg.set_value("multiplayer", "enable_chat",  enable_chat.button_pressed)
 	cfg.save(_SETTINGS_PATH)
 
 func _start_engine_watcher() -> void:
@@ -141,6 +157,13 @@ func _on_engine_stopped() -> void:
 	if server_node:
 		server_node.queue_free()
 		server_node = null
+	chat_layer.visible  = false
+	chat_field.editable = false
+	chat_field.visible  = false
+	# p4o-a7o: just to be ABSOLUTELY safe i guess
+	chat_field.release_focus()
+	chat_ctrl.chat_enabled = false
+	chat_ctrl.clear_chat()
 
 func _launch_game() -> void:
 	var path := game_path.text.strip_edges()
@@ -154,6 +177,11 @@ func _launch_game() -> void:
 	
 	godot_menu_layer.visible = false
 	engine_layer.visible     = true
+	if enable_chat.button_pressed:
+		chat_layer.visible     = true
+		chat_field.editable    = true
+		chat_ctrl.chat_enabled = true
+		
 	
 	_start_engine_watcher()
 	
@@ -174,3 +202,9 @@ func _on_mp_enable_toggled(toggled_on: bool) -> void:
 	mp_server.disabled = not toggled_on
 	if not toggled_on:
 		mp_server.button_pressed = false
+
+# p4o-a7o: this is connected from the signals menu if that matters
+func _on_window_scale_changed(index: int) -> void:
+	var window := get_window()
+	var scale := index+1
+	window.size = Vector2(640, 480) * scale

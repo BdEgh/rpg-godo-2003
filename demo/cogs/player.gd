@@ -2,12 +2,17 @@ extends RPGMakerPlayer
 
 @export var texture_rect: TextureRect
 @export var game_sub_viewport: SubViewport
+@export var chat_text_field: LineEdit
 
 ## Note that _process and _ready functions
 ## were defined inside gdextension and will
 ## not work here
 
 func _input(event: InputEvent) -> void:
+	# p4o-a7o: TODO: release all keys held when pressing T
+	# (because of the chat overlay)
+	if chat_text_field.has_focus():
+		return
 	if event is InputEventKey:
 		var key_event := event as InputEventKey
 		var easyrpg_key := _godot_key_to_easyrpg(key_event.keycode)

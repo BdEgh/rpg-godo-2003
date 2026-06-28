@@ -3,10 +3,12 @@ extends Node
 
 @export var server_url: String = "wss://127.0.0.1/"
 @export var engine: NodePath
+@export var chat_ctrl: Control
 
 @export var player_name: String = ""
 
 @export var enable_sounds: bool = true
+@export var enable_chat: bool = false
 @export var mute_audio: bool = false
 @export var moving_queue_limit: int = 4
 
@@ -14,6 +16,7 @@ var _conn: EasyConnection = null
 var _engine: Node = null
 
 var _room_id: int = -1
+var _my_pid: int = -1
 var _session_active: bool = false
 var _session_connected: bool = false
 var _switching_room: bool = true
@@ -133,6 +136,12 @@ func quit() -> void:
 		_engine.mp_set_session_active(false)
 	_conn.close()
 	_initialize()
+
+func set_enable_chat(on: bool) -> void:
+	enable_chat = on
+	if not _session_connected:
+		return
+	_conn.send_packet("chaton", ["1" if enable_chat else "0"])
 
 func _wire_player_signals() -> void:
 	_engine.player_moved.connect(_on_local_moved)
@@ -297,16 +306,19 @@ func _on_packet(type: String, args: Array) -> void:
 		"pns": _handle_name_list_sync(args)
 		"bas": _handle_battle_anim_id_list(args)
 		"name": _handle_name(args)
+		"chat": _handle_chat(args)
 		_:
 			Log.warn("[EasyMultiplayer] unknown packet '%s' args=%s" % [type, str(args)])
 
 func _handle_sync_player_data(_args: Array) -> void:
 	_session_connected = true
 	Log.info("[EasyMultiplayer] session ready")
+	_my_pid = int(_args[1])
 	if _engine and _engine.is_running():
 		_engine.mp_sync_local_player()
 	_send_basic_data()
 	_conn.send_packet("sr", [str(_room_id)])
+	_conn.send_packet("chaton", ["1" if enable_chat else "0"])
 
 func _handle_room_info(args: Array) -> void:
 	if args.is_empty():
@@ -552,6 +564,23 @@ func _handle_name(args: Array) -> void:
 		Log.debug("[EasyMultiplayer] player %d name='%s'" % [id, n])
 	if _engine and _engine.is_running() and _engine.is_map_ready():
 		_engine.mp_set_player_name(id, n)
+
+func _handle_chat(args: Array) -> void:
+	if args.size() < 2:
+		return
+	var id := int(args[0])
+	var msg := args[1] as String
+	if msg.length() > 100:
+		Log.warn("[EasyMultiplayer] Attempt to send message over 100 characters from PID %d" % id)
+		return
+	var display_name := player_name
+	if not _players.has(id):
+		if id != _my_pid:
+			Log.warn("[EasyMultiplayer] got chat message from unknown PID: %d" % id)
+			return
+	else:
+		display_name = _players[id].display_name
+	MpEvents.on_chat_message.emit(display_name, msg)
 
 func _send_basic_data() -> void:
 	if not _session_connected:
