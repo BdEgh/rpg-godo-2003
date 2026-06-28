@@ -27,6 +27,7 @@ class PeerEntry:
 	var transparency: int = 0
 	var sys_name: String = ""
 	var display_name: String = ""
+	var chat_enabled: bool = false # p4o-a7o: off by default
 
 func _ready() -> void:
 	if auto_start:
@@ -100,7 +101,8 @@ func _accept_connection(stream: StreamPeerTCP) -> void:
 
 func _on_peer_open(pid: int, _entry: PeerEntry) -> void:
 	Log.debug("[EasyServer] peer %d open, sending s" % pid)
-	_send_to(pid, _build("s", ["0"]))
+	# p4o-a7o: added PID to message for identifying self in chat messages
+	_send_to(pid, _build("s", ["0", str(pid)]))
 
 func _on_peer_closed(pid: int) -> void:
 	if not _peers.has(pid):
@@ -138,6 +140,8 @@ func _dispatch_message(pid: int, entry: PeerEntry, msg: String) -> void:
 		"h": _handle_hidden(pid, entry, args)
 		"sys": _handle_sys(pid, entry, args)
 		"name": _handle_name_pkt(pid, entry, args)
+		"chat": _handle_chat(pid, entry, args)
+		"chaton": _handle_chaton(pid, entry, args)
 		"fl","rfl","rrfl","se","ba","ap","mp","rp","ss","sv","sev":
 			_handle_relay(pid, entry, type, args)
 		_:
@@ -229,6 +233,34 @@ func _handle_name_pkt(pid: int, entry: PeerEntry, args: Array) -> void:
 		return
 	entry.display_name = args[0]
 	_broadcast_to_room(entry.room_id, _build("name", [str(entry.id)] + args), pid)
+
+func _handle_chat(pid: int, entry: PeerEntry, args: Array) -> void:
+	if args.is_empty():
+		return
+	if not entry.chat_enabled:
+		Log.warn("[EasyServer] Attempt to send chat message without chat enabled from PID %d" % pid)
+		return
+	# nameless players should probably not be able to talk...
+	if entry.display_name == "" or entry.display_name.length() == 0:
+		return
+	var msg := args[0] as String
+	if msg.length() > 100:
+		return
+	# basically _broadcast_to_room, but skips over
+	# peers that have chat disabled, and also
+	# broadcasts sender's message back to the sender
+	for other_pid in _peers.keys():
+		var cur_peer := _peers[other_pid] as PeerEntry
+		if not cur_peer.chat_enabled:
+			continue
+		if cur_peer.room_id == entry.room_id:
+			_send_to(other_pid, _build("chat", [str(pid), msg]))
+
+func _handle_chaton(pid: int, entry: PeerEntry, args: Array) -> void:
+	if args.size() < 1:
+		return
+	Log.debug("[EasyServer] chaton from PID %d: %s" % [pid, args[0]])
+	entry.chat_enabled = args[0] == "1" # yeah
 
 func _handle_relay(pid: int, entry: PeerEntry, pkt_name: String, args: Array) -> void:
 	_broadcast_to_room(entry.room_id, _build(pkt_name, [str(entry.id)] + args), pid)

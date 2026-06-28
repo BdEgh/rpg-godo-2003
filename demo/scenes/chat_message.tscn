@@ -1,0 +1,14 @@
+[gd_scene format=3 uid="uid://0pb7a62dkm5o"]
+
+[ext_resource type="FontFile" uid="uid://dh8uf0t6kqv8" path="res://resources/RM2000.ttf" id="1_fpeyo"]
+[ext_resource type="StyleBox" uid="uid://bfbanystyirf6" path="res://resources/chat_stylebox.tres" id="2_v31oi"]
+
+[node name="ChatMessage" type="Label" unique_id=1593713811]
+custom_minimum_size = Vector2(320, 0)
+size_flags_horizontal = 0
+theme_override_colors/font_shadow_color = Color(0.1584723, 0.15847233, 0.1584723, 1)
+theme_override_constants/shadow_outline_size = 0
+theme_override_fonts/font = ExtResource("1_fpeyo")
+theme_override_styles/normal = ExtResource("2_v31oi")
+text = "[User]: I wonder whats for Dinner. Gee, it sure is boring around here!"
+autowrap_mode = 3
