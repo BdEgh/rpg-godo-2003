@@ -1,17 +1,22 @@
 [gd_scene format=3 uid="uid://dqclyd3klu6qq"]
 
 [ext_resource type="Script" uid="uid://bpl2msts7fe8c" path="res://cogs/audio_output.gd" id="2_0wfyh"]
-[ext_resource type="Script" uid="uid://c7appq8adg23t" path="res://cogs/debug.gd" id="2_o6xl0"]
+[ext_resource type="Script" uid="uid://df6dcnraqioar" path="res://cogs/debug.gd" id="2_o6xl0"]
 [ext_resource type="Theme" uid="uid://dx13y3513lj8e" path="res://resources/theme.tres" id="2_sugp2"]
 [ext_resource type="Script" uid="uid://dqxxnroichm58" path="res://cogs/player.gd" id="2_tipki"]
 [ext_resource type="Script" uid="uid://c60wtn8idcv82" path="res://cogs/setup_screen.gd" id="3_tefeu"]
 [ext_resource type="Texture2D" uid="uid://dcw31o6ckjsa3" path="res://resources/orchidmantis_system_celestial.png" id="4_tbgi4"]
 [ext_resource type="Texture2D" uid="uid://8nq581ljnhf1" path="res://resources/16x16.png" id="4_tefeu"]
+[ext_resource type="Script" uid="uid://b11opfau8rsqp" path="res://cogs/toolbar.gd" id="4_trceg"]
+[ext_resource type="Texture2D" uid="uid://d3yo3d58cieam" path="res://resources/chat-on.png" id="5_a8y0u"]
+[ext_resource type="Texture2D" uid="uid://dvjo6m6mqrn71" path="res://resources/reconnect.png" id="5_jkv2x"]
 [ext_resource type="Script" uid="uid://sonh8ck8vsp" path="res://cogs/chat_overlay.gd" id="8_85g3d"]
 [ext_resource type="Script" uid="uid://c7d4uy5lls8cx" path="res://cogs/game_texture.gd" id="8_tipki"]
 [ext_resource type="FontFile" uid="uid://dh8uf0t6kqv8" path="res://resources/RM2000.ttf" id="10_choun"]
+[ext_resource type="StyleBox" uid="uid://ca3cj8e1se5t3" path="res://resources/borders_texture.tres" id="10_muem4"]
 [ext_resource type="StyleBox" uid="uid://bfbanystyirf6" path="res://resources/chat_stylebox.tres" id="11_ya4ey"]
 [ext_resource type="StyleBox" uid="uid://cg3fj7teitw24" path="res://resources/chat_stylebox_focus.tres" id="12_eb6dy"]
+[ext_resource type="Texture2D" uid="uid://br4y6pwuqmyjo" path="res://resources/fullscreenv232x.png" id="12_jbj1t"]
 
 [sub_resource type="Gradient" id="Gradient_tbgi4"]
 offsets = PackedFloat32Array(0, 0.627907, 0.9302326, 1)
@@ -198,6 +203,7 @@ oversampling_override = 1.0
 title = "Open a Directory"
 file_mode = 2
 access = 2
+use_native_dialog = true
 
 [node name="AudioVolume" type="Button" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer" unique_id=1947328750]
 custom_minimum_size = Vector2(48, 48)
@@ -697,8 +703,92 @@ stretch_mode = 5
 script = ExtResource("8_tipki")
 engine = NodePath("../../../../RPGMakerPlayer")
 
-<<<<<<< HEAD
-=======
+[node name="ToolbarLayer" type="CanvasLayer" parent="." unique_id=303368926]
+unique_name_in_owner = true
+visible = false
+
+[node name="ToolbarRoot" type="Control" parent="ToolbarLayer" unique_id=668610770]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 66.0
+grow_horizontal = 2
+mouse_filter = 1
+script = ExtResource("4_trceg")
+
+[node name="ToolbarDimmer" type="ColorRect" parent="ToolbarLayer/ToolbarRoot" unique_id=1115048541]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_left = 2.0
+offset_right = -2.0
+offset_bottom = 52.0
+grow_horizontal = 2
+offset_transform_enabled = true
+offset_transform_position = Vector2(0, 2)
+mouse_filter = 2
+color = Color(0, 0, 0, 0.49803922)
+
+[node name="PanelContainer" type="PanelContainer" parent="ToolbarLayer/ToolbarRoot" unique_id=335515382]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 56.0
+grow_horizontal = 2
+mouse_filter = 1
+theme_override_styles/panel = ExtResource("10_muem4")
+
+[node name="ToolbarMargin" type="MarginContainer" parent="ToolbarLayer/ToolbarRoot/PanelContainer" unique_id=2147472911]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="ToolbarItems" type="HSplitContainer" parent="ToolbarLayer/ToolbarRoot/PanelContainer/ToolbarMargin" unique_id=1150375865]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 1
+split_offsets = PackedInt32Array(0, 1500)
+dragging_enabled = false
+dragger_visibility = 1
+
+[node name="ReconnectButton" type="Button" parent="ToolbarLayer/ToolbarRoot/PanelContainer/ToolbarMargin/ToolbarItems" unique_id=839221480]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+custom_maximum_size = Vector2(32, 32)
+layout_mode = 2
+mouse_filter = 1
+icon = ExtResource("5_jkv2x")
+flat = true
+icon_alignment = 1
+
+[node name="ChatToggle" type="Button" parent="ToolbarLayer/ToolbarRoot/PanelContainer/ToolbarMargin/ToolbarItems" unique_id=13752837]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+custom_maximum_size = Vector2(32, 32)
+layout_mode = 2
+mouse_filter = 1
+toggle_mode = true
+icon = ExtResource("5_a8y0u")
+flat = true
+icon_alignment = 1
+
+[node name="FullscreenButton" type="Button" parent="ToolbarLayer/ToolbarRoot/PanelContainer/ToolbarMargin/ToolbarItems" unique_id=1034920001]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 32)
+custom_maximum_size = Vector2(32, 32)
+layout_mode = 2
+mouse_filter = 1
+toggle_mode = true
+icon = ExtResource("12_jbj1t")
+flat = true
+icon_alignment = 1
+
 [node name="ChatOverlayLayer" type="CanvasLayer" parent="." unique_id=1353566743]
 unique_name_in_owner = true
 visible = false
@@ -751,5 +841,9 @@ caret_blink = true
 
 [connection signal="resolution_changed" from="RPGMakerPlayer" to="RPGMakerPlayer" method="_on_resolution_changed"]
 [connection signal="item_selected" from="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/GameOptions/MarginContainer/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/WindowScale" to="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen" method="_on_window_scale_changed"]
->>>>>>> 1821663 (multiplayer chat, window scale options)
 [connection signal="toggled" from="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/Multiplayer/MarginContainer/VBoxContainer/HBoxContainer3/MpEnable" to="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen" method="_on_mp_enable_toggled"]
+[connection signal="mouse_entered" from="ToolbarLayer/ToolbarRoot" to="ToolbarLayer/ToolbarRoot" method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="ToolbarLayer/ToolbarRoot" to="ToolbarLayer/ToolbarRoot" method="_on_mouse_exited"]
+[connection signal="pressed" from="ToolbarLayer/ToolbarRoot/PanelContainer/ToolbarMargin/ToolbarItems/ReconnectButton" to="ToolbarLayer/ToolbarRoot" method="_on_reconnect_button_pressed"]
+[connection signal="toggled" from="ToolbarLayer/ToolbarRoot/PanelContainer/ToolbarMargin/ToolbarItems/ChatToggle" to="ToolbarLayer/ToolbarRoot" method="_on_chat_toggle_toggled"]
+[connection signal="toggled" from="ToolbarLayer/ToolbarRoot/PanelContainer/ToolbarMargin/ToolbarItems/FullscreenButton" to="ToolbarLayer/ToolbarRoot" method="_on_fullscreen_toggled"]

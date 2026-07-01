@@ -96,3 +96,17 @@ func clear_chat():
 		chat_vbox.remove_child(item)
 		item.queue_free()
 	_fade_tweens.clear()
+
+func enable_overlay():
+	%ChatOverlayLayer.visible = true
+	chat_text_field.editable  = true
+	chat_enabled              = true
+	
+func disable_overlay():
+	%ChatOverlayLayer.visible       = false
+	chat_text_field.editable        = false
+	chat_text_field.visible         = false
+	# just to be ABSOLUTELY safe i guess
+	chat_text_field.release_focus()
+	chat_enabled = false
+	clear_chat()

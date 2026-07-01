@@ -157,13 +157,8 @@ func _on_engine_stopped() -> void:
 	if server_node:
 		server_node.queue_free()
 		server_node = null
-	chat_layer.visible  = false
-	chat_field.editable = false
-	chat_field.visible  = false
-	# p4o-a7o: just to be ABSOLUTELY safe i guess
-	chat_field.release_focus()
-	chat_ctrl.chat_enabled = false
-	chat_ctrl.clear_chat()
+	chat_ctrl.disable_overlay()
+	%ToolbarLayer.visible = false
 
 func _launch_game() -> void:
 	var path := game_path.text.strip_edges()
@@ -175,12 +170,17 @@ func _launch_game() -> void:
 	_on_audio_volume_changed(audio_slider.value)
 	engine.start_game()
 	
+	%ToolbarLayer.visible = true
+	%ChatToggle.button_pressed = enable_chat.button_pressed
+	if %ChatToggle.button_pressed:
+		%ChatToggle.icon = preload("res://resources/chat-on.png")
+	else:
+		%ChatToggle.icon = preload("res://resources/chat-off.png")
+	
 	godot_menu_layer.visible = false
 	engine_layer.visible     = true
 	if enable_chat.button_pressed:
-		chat_layer.visible     = true
-		chat_field.editable    = true
-		chat_ctrl.chat_enabled = true
+		chat_ctrl.enable_overlay()
 		
 	
 	_start_engine_watcher()

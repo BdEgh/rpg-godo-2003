@@ -70,17 +70,19 @@ func chat_command(enabled: bool) -> void:
 		var chat_ctrl: Node = %ChatControl
 		var chat_field: LineEdit = %ChatField
 		if enabled:
-			chat_layer.visible     = true
+			"""chat_layer.visible     = true
 			chat_field.editable    = true
-			chat_ctrl.chat_enabled = true
+			chat_ctrl.chat_enabled = true"""
+			chat_ctrl.enable_overlay()
 		else:
-			chat_layer.visible  = false
+			chat_ctrl.disable_overlay()
+			"""chat_layer.visible  = false
 			chat_field.editable = false
 			chat_field.visible  = false
 			# just to be ABSOLUTELY safe i guess
 			chat_field.release_focus()
 			chat_ctrl.chat_enabled = false
-			chat_ctrl.clear_chat()
+			chat_ctrl.clear_chat()"""
 	else: Log.error("This command only runs on the client!")
 
 func _add_limbo_commands() -> void:

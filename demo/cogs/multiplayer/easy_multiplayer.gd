@@ -260,10 +260,12 @@ func _on_ws_connected() -> void:
 	Log.info("[EasyMultiplayer] WebSocket connected")
 	if _engine and _engine.is_running():
 		_engine.mp_set_session_active(true)
+	MpEvents.on_connected.emit()
 
 func _on_ws_disconnected(code: int) -> void:
 	Log.info("[EasyMultiplayer] WebSocket disconnected code=%d" % code)
 	_session_connected = false
+	MpEvents.on_disconnected.emit()
 	if code == 1028:
 		Log.warn("[EasyMultiplayer] server EXIT (1028) — stopping session")
 		_session_active = false
