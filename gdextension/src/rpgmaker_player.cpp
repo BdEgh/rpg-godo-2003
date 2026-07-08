@@ -572,11 +572,10 @@ void RPGMakerPlayer::on_frame_ready(const uint8_t* pixels, int width, int height
 			uint8_t b = src_row[x * 4 + 0];
 			uint8_t g = src_row[x * 4 + 1];
 			uint8_t r = src_row[x * 4 + 2];
-			uint8_t a = src_row[x * 4 + 3];
 			dst_row[x * 4 + 0] = r;
 			dst_row[x * 4 + 1] = g;
 			dst_row[x * 4 + 2] = b;
-			dst_row[x * 4 + 3] = (a == 0) ? 255 : a;
+			dst_row[x * 4 + 3] = 255;
 		}
 	}
 
