@@ -1,54 +1,48 @@
 extends Control
 
-# p4o-a7o: NOTE: the placeholder text for ChatField is "Press [T] to type...", but
-# i would have preferred if it was formatted/localized, but i don't really
-# know how to do that since ive never worked with Godot, and it's probably
-# not a huge deal for anyone anyway so that will suffice for now, but
-# i thought i would add a note here anyways since i do not intend it to be hard-coded
+# bde: i'll strip placeholder text for now o.o
 
 @export var mp_connection: EasyMultiplayer = null
 # TODO: menu option for this thing or a debug command
-@export var chat_history_limit: int = 10:
+@export var chat_history_limit: int = 30:
 	set(value):
 		chat_history_limit = value
 		_delete_old_messages()
 @export var chat_fade_rate: float = 0.75
-@export var chat_enabled = false
+@export var chat_enabled = true
 
 @onready var chat_text_field: LineEdit = %ChatField
 @onready var chat_vbox: VBoxContainer = %MessageContainer
+@onready var chat_overlay_layer: CanvasLayer = %ChatOverlayLayer
 
 const _CHAT_MESSAGE_SCN := preload("res://scenes/chat_message.tscn")
 
 var _chat_open = false
 # p4o-a7o: yes im aware that Tweens exist but i did not want to pause
 # the tweens when the chat was open, so i did it in this very goofy way
+# bde: if it works, it works :3
 class FadeTween:
 	var countdown: float = 5
 	var t: float = 1
 var _fade_tweens: Array[FadeTween] = []
 
 func _ready() -> void:
-	chat_text_field.text_submitted.connect(_on_text_submitted)
 	MpEvents.on_chat_message.connect(add_chat_message)
-	pass
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
+	if event.is_action_pressed("game_chat_toggle"):
+		chat_enabled = not chat_enabled
+		chat_overlay_layer.visible = not chat_overlay_layer.visible
+	
 	if not chat_enabled:
 		return
-	if event.is_action_released("game_chat_release") and _chat_open:
-		chat_text_field.set_visible(false)
-		chat_text_field.release_focus()
-		_chat_open = false
-		return
-	# im doing this on released to avoid having a "t" appear in the chat box every single time
-	if event.is_action_released("game_chat_focus"):
+	if event.is_action_pressed("game_chat_focus"):
 		chat_text_field.set_visible(true)
 		chat_text_field.grab_focus()
 		_chat_open = true
 		return
 
-func _process(delta: float) -> void:
+func _physics_process(delta: float) -> void:
 	if not chat_enabled:
 		return
 	var msgs := chat_vbox.get_children()
@@ -66,13 +60,6 @@ func _process(delta: float) -> void:
 		var chat_msg_node := msgs[i]
 		var contents := chat_msg_node
 		contents.modulate.a = transp
-
-func _on_text_submitted(text_field) -> void:
-	mp_connection._conn.send_packet("chat", [chat_text_field.text])
-	chat_text_field.clear()
-	chat_text_field.set_visible(false)
-	chat_text_field.release_focus()
-	_chat_open = false
 
 func _delete_old_messages() -> void:
 	while chat_vbox.get_child_count() > chat_history_limit:
@@ -96,3 +83,15 @@ func clear_chat():
 		chat_vbox.remove_child(item)
 		item.queue_free()
 	_fade_tweens.clear()
+
+func _on_chat_field_text_submitted(new_text: String) -> void:
+	mp_connection._conn.send_packet("chat", [new_text])
+	chat_text_field.clear()
+	chat_text_field.set_visible(false)
+	chat_text_field.release_focus()
+	_chat_open = false
+
+func _on_chat_field_editing_toggled(toggled_on: bool) -> void:
+	if not toggled_on:
+		chat_text_field.set_visible(false)
+		_chat_open = false

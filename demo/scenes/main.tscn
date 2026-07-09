@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://dqclyd3klu6qq"]
 
 [ext_resource type="Script" uid="uid://bpl2msts7fe8c" path="res://cogs/audio_output.gd" id="2_0wfyh"]
-[ext_resource type="Script" uid="uid://dvmhag06t8tsj" path="res://cogs/debug.gd" id="2_o6xl0"]
+[ext_resource type="Script" uid="uid://c7appq8adg23t" path="res://cogs/debug.gd" id="2_o6xl0"]
 [ext_resource type="Theme" uid="uid://dx13y3513lj8e" path="res://resources/theme.tres" id="2_sugp2"]
-[ext_resource type="Script" uid="uid://c561u7lacb6tj" path="res://cogs/player.gd" id="2_tipki"]
-[ext_resource type="Script" uid="uid://bln6hjrcwdri3" path="res://cogs/setup_screen.gd" id="3_tefeu"]
+[ext_resource type="Script" uid="uid://k5g7aae8way2" path="res://cogs/player.gd" id="2_tipki"]
+[ext_resource type="Script" uid="uid://blxa12njnbatg" path="res://cogs/setup_screen.gd" id="3_tefeu"]
 [ext_resource type="Texture2D" uid="uid://dcw31o6ckjsa3" path="res://resources/orchidmantis_system_celestial.png" id="4_tbgi4"]
 [ext_resource type="Texture2D" uid="uid://8nq581ljnhf1" path="res://resources/16x16.png" id="4_tefeu"]
 [ext_resource type="Script" uid="uid://bj2avukotla54" path="res://cogs/chat_overlay.gd" id="8_85g3d"]
@@ -198,6 +198,7 @@ oversampling_override = 1.0
 title = "Open a Directory"
 file_mode = 2
 access = 2
+use_native_dialog = true
 
 [node name="AudioVolume" type="Button" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer" unique_id=1947328750]
 custom_minimum_size = Vector2(48, 48)
@@ -345,7 +346,7 @@ popup/item_3/text = "4x"
 popup/item_3/id = 3
 
 [node name="Multiplayer" type="Button" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer" unique_id=325583667]
-custom_minimum_size = Vector2(48, 170)
+custom_minimum_size = Vector2(48, 150)
 layout_mode = 2
 mouse_filter = 2
 
@@ -510,42 +511,6 @@ stretch_mode = 1
 metadata/_edit_use_anchors_ = true
 
 [node name="MpServer" type="CheckBox" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/Multiplayer/MarginContainer/VBoxContainer/HBoxContainer" unique_id=573693616]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="HBoxContainer5" type="HBoxContainer" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/Multiplayer/MarginContainer/VBoxContainer" unique_id=1291916112]
-layout_mode = 2
-
-[node name="Spacer" type="Control" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/Multiplayer/MarginContainer/VBoxContainer/HBoxContainer5" unique_id=1116409518]
-custom_minimum_size = Vector2(15, 0)
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/Multiplayer/MarginContainer/VBoxContainer/HBoxContainer5" unique_id=204326574]
-layout_mode = 2
-alignment = 1
-
-[node name="RichTextLabel" type="RichTextLabel" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/Multiplayer/MarginContainer/VBoxContainer/HBoxContainer5/VBoxContainer" unique_id=392413786]
-clip_children = 1
-custom_minimum_size = Vector2(150, 0)
-layout_mode = 2
-bbcode_enabled = true
-text = "Enable chat:"
-fit_content = true
-vertical_alignment = 1
-
-[node name="TextureRect" type="TextureRect" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/Multiplayer/MarginContainer/VBoxContainer/HBoxContainer5/VBoxContainer/RichTextLabel" unique_id=497225890]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-texture = SubResource("AtlasTexture_tefeu")
-expand_mode = 1
-stretch_mode = 1
-metadata/_edit_use_anchors_ = true
-
-[node name="EnableChat" type="CheckBox" parent="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/Multiplayer/MarginContainer/VBoxContainer/HBoxContainer5" unique_id=1086459223]
 unique_name_in_owner = true
 layout_mode = 2
 
@@ -740,9 +705,7 @@ mouse_filter = 1
 theme_override_fonts/font = ExtResource("10_choun")
 theme_override_styles/normal = ExtResource("11_ya4ey")
 theme_override_styles/focus = ExtResource("12_eb6dy")
-placeholder_text = "Press [T] to type..."
 max_length = 100
-editable = false
 emoji_menu_enabled = false
 backspace_deletes_composite_character_enabled = true
 caret_blink = true
@@ -750,3 +713,6 @@ caret_blink = true
 [connection signal="resolution_changed" from="RPGMakerPlayer" to="RPGMakerPlayer" method="_on_resolution_changed"]
 [connection signal="item_selected" from="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/GameOptions/MarginContainer/PanelContainer/VBoxContainer/MarginContainer/VBoxContainer/WindowScale" to="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen" method="_on_window_scale_changed"]
 [connection signal="toggled" from="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen/VBoxContainer/Multiplayer/MarginContainer/VBoxContainer/HBoxContainer3/MpEnable" to="GodotMenuLayer/SubViewportContainer/SubViewport/SetupScreen" method="_on_mp_enable_toggled"]
+[connection signal="editing_toggled" from="ChatOverlayLayer/ChatControl/VBoxContainer/ChatField" to="ChatOverlayLayer/ChatControl" method="_on_chat_field_editing_toggled"]
+[connection signal="focus_exited" from="ChatOverlayLayer/ChatControl/VBoxContainer/ChatField" to="ChatOverlayLayer/ChatControl" method="_on_chat_field_focus_exited"]
+[connection signal="text_submitted" from="ChatOverlayLayer/ChatControl/VBoxContainer/ChatField" to="ChatOverlayLayer/ChatControl" method="_on_chat_field_text_submitted"]

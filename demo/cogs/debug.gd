@@ -56,32 +56,25 @@ func set_resolution_scale(scale: float) -> void:
 # i added this so its at least possible to disable/enable the chat
 # while playing the game
 func chat_command(enabled: bool) -> void:
-	var e := get_node_or_null("%RPGMakerPlayer") as RPGMakerPlayer
-	if e:
-		if not e.is_running():
-			Log.warn("Engine is not running!")
-			return
-		var mp_node := e.get_node_or_null("./MpNode") as EasyMultiplayer
-		if not mp_node:
-			Log.warn("You are not connected to multiplayer!")
-			return
-		mp_node.set_enable_chat(enabled)
-		var chat_layer: CanvasLayer = %ChatOverlayLayer
-		var chat_ctrl: Node = %ChatControl
-		var chat_field: LineEdit = %ChatField
-		if enabled:
-			chat_layer.visible     = true
-			chat_field.editable    = true
-			chat_ctrl.chat_enabled = true
-		else:
-			chat_layer.visible  = false
-			chat_field.editable = false
-			chat_field.visible  = false
-			# just to be ABSOLUTELY safe i guess
-			chat_field.release_focus()
-			chat_ctrl.chat_enabled = false
-			chat_ctrl.clear_chat()
-	else: Log.error("This command only runs on the client!")
+	var mp_node := get_node_or_null("%RPGMakerPlayer/MpNode") as EasyMultiplayer
+	if not mp_node:
+		Log.warn("You are not connected to multiplayer!")
+		return
+	mp_node.set_enable_chat(enabled)
+	var chat_layer: CanvasLayer = %ChatOverlayLayer
+	var chat_ctrl: Node = %ChatControl
+	var chat_field: LineEdit = %ChatField
+	if enabled:
+		chat_layer.visible     = true
+		chat_field.editable    = true
+		chat_ctrl.chat_enabled = true
+	else:
+		chat_layer.visible  = false
+		chat_field.editable = false
+		chat_field.visible  = false
+		# just to be ABSOLUTELY safe i guess
+		chat_field.release_focus()
+		chat_ctrl.chat_enabled = false
 
 func _add_limbo_commands() -> void:
 	LimboConsole.register_command(do_open_save_menu, "save", "Open save screen")
