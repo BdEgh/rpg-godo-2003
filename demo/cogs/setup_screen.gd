@@ -49,7 +49,6 @@ func _ready() -> void:
 	mp_server.button_pressed = cfg.get_value("multiplayer", "host_locally", false)
 	run_on_start.button_pressed = cfg.get_value("game", "run_on_start", false)
 	window_scale.selected = cfg.get_value("game", "window_scale", 0)
-	enable_chat.button_pressed = cfg.get_value("multiplayer", "enable_chat", false)
 	
 	var window := get_window()
 	var scale := window_scale.selected+1
@@ -82,7 +81,7 @@ func _start_mp_client(parent: Node) -> void:
 	multiplayer_node.engine = engine.get_path()
 	multiplayer_node.server_url = mp_url.text.strip_edges()
 	multiplayer_node.player_name = mp_name.text.strip_edges()
-	multiplayer_node.enable_chat = enable_chat.button_pressed
+	multiplayer_node.enable_chat = true
 	chat_ctrl.mp_connection = multiplayer_node # p4o-a7o: this is a little weird yes but we all die in the end anyways
 	parent.add_child(multiplayer_node)
 	# nametag modes: 0=NONE, 1=CLASSIC (3-char), 2=COMPACT (full), 3=SLIM (full, small font)
@@ -124,7 +123,6 @@ func _save_settings() -> void:
 	cfg.set_value("multiplayer", "name",         mp_name.text.strip_edges())
 	cfg.set_value("multiplayer", "url",          mp_url.text.strip_edges())
 	cfg.set_value("multiplayer", "host_locally", mp_server.button_pressed)
-	cfg.set_value("multiplayer", "enable_chat",  enable_chat.button_pressed)
 	cfg.save(_SETTINGS_PATH)
 
 func _start_engine_watcher() -> void:
@@ -149,7 +147,7 @@ func _on_watch_timer_timeout() -> void:
 func _on_engine_stopped() -> void:
 	Transition.outro()
 	godot_menu_layer.visible = true
-	engine_layer.visible     = false
+	engine_layer.visible = false
 	save_and_run.disabled = false
 	if multiplayer_node:
 		multiplayer_node.queue_free()
@@ -157,10 +155,7 @@ func _on_engine_stopped() -> void:
 	if server_node:
 		server_node.queue_free()
 		server_node = null
-	chat_layer.visible  = false
-	chat_field.editable = false
-	chat_field.visible  = false
-	# p4o-a7o: just to be ABSOLUTELY safe i guess
+	chat_layer.visible = false
 	chat_field.release_focus()
 	chat_ctrl.chat_enabled = false
 	chat_ctrl.clear_chat()
@@ -176,12 +171,9 @@ func _launch_game() -> void:
 	engine.start_game()
 	
 	godot_menu_layer.visible = false
-	engine_layer.visible     = true
-	if enable_chat.button_pressed:
-		chat_layer.visible     = true
-		chat_field.editable    = true
-		chat_ctrl.chat_enabled = true
-		
+	engine_layer.visible = true
+	chat_layer.visible = true
+	chat_ctrl.chat_enabled = true
 	
 	_start_engine_watcher()
 	

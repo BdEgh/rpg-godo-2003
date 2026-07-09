@@ -1,7 +1,7 @@
 class_name EasyMultiplayer
 extends Node
 
-@export var server_url: String = "wss://127.0.0.1/"
+@export var server_url: String = "ws://127.0.0.1:42424"
 @export var engine: NodePath
 @export var chat_ctrl: Control
 
