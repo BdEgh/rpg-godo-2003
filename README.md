@@ -1,8 +1,15 @@
 ## RPGGodo2003
 
-made so you can always play ynfg with someone else
+You can play YNFGs together with it! (i want cu so bad)
 
-(i want cu so bad)
+Download the tool for your windows/linux system from this link: https://github.com/BdEgh/rpg-godo-2003/releases
+
+Turn on Multiplayer and set "Connect to" address to 
+```ws://89.169.163.164:42424```
+
+Change the other settings as you wish and you're ready to go!
+
+----
 
 ## windows compilation
 
